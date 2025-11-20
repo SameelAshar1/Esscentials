@@ -1,0 +1,70 @@
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #fff8fb 0%, #ffe6ef 100%);
+}
+
+main {
+  flex: 1;
+  padding-bottom: 60px;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Buttons */
+.btn {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px rgba(199, 79, 127, 0.2);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--color-primary);
+  border: 1px solid rgba(199, 79, 127, 0.2);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-secondary);
+}
+
+/* Loading and Error States */
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: var(--color-muted);
+}
+
+.error {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-primary-dark);
+  font-size: 18px;
+}
+

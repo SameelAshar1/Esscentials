@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+  --color-primary: #c74f7f;
+  --color-primary-dark: #a83f68;
+  --color-secondary: #ffe7ef;
+  --color-tertiary: #fff5f8;
+  --color-text: #4b2b3b;
+  --color-muted: #8c6b7b;
+  --shadow-soft: 0 10px 25px rgba(199, 79, 127, 0.15);
+  --radius-lg: 24px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Playfair Display', 'Cormorant Garamond', 'Poppins', serif;
+}
+
+body {
+  background: linear-gradient(180deg, #fff7fa 0%, #ffeef3 100%);
+  min-height: 100vh;
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: 'JetBrains Mono', 'Source Code Pro', Menlo, Monaco, Consolas,
+    'Courier New', monospace;
+}
+

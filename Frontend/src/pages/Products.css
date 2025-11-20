@@ -1,0 +1,68 @@
+.products-page {
+  padding: 60px 0;
+  min-height: 70vh;
+}
+
+.products-page h1 {
+  text-align: center;
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+  font-family: 'Playfair Display', serif;
+}
+
+.products-page > .container > p {
+  text-align: center;
+  color: var(--color-muted);
+  margin-bottom: 2.5rem;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.search-box input,
+.category-filter select {
+  flex: 1;
+  min-width: 200px;
+  padding: 14px 16px;
+  border: 1px solid rgba(199, 79, 127, 0.2);
+  border-radius: 999px;
+  font-size: 16px;
+  background-color: #fff;
+  font-family: 'Poppins', sans-serif;
+}
+
+.category-filter select {
+  cursor: pointer;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+  }
+  
+  .search-box input,
+  .category-filter select {
+    width: 100%;
+  }
+  
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
