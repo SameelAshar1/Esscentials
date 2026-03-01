@@ -22,8 +22,13 @@ function Admin() {
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
+    const token = window.localStorage.getItem('adminToken');
+    if (!token) {
+      navigate('/admin/login');
+      return;
+    }
     fetchCategories();
-  }, []);
+  }, [navigate]);
 
   const fetchCategories = async () => {
     try {

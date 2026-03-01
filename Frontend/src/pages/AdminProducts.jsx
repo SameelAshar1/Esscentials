@@ -12,9 +12,14 @@ function AdminProducts() {
   const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
+    const token = window.localStorage.getItem('adminToken');
+    if (!token) {
+      navigate('/admin/login');
+      return;
+    }
     fetchCategories();
     fetchProducts();
-  }, []);
+  }, [navigate]);
 
   const fetchCategories = async () => {
     try {

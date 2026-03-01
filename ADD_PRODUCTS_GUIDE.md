@@ -84,3 +84,5 @@ After adding products, you can view them at:
 - Home Page: `http://localhost:3000` (shows featured products)
 
 
+
+

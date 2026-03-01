@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('../config/database');
 const multer = require('multer');
 const path = require('path');
+const verifyAdmin = require('../middleware/adminAuth');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -77,8 +78,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST create new product
-router.post('/', upload.single('image'), async (req, res) => {
+// POST create new product (admin only)
+router.post('/', verifyAdmin, upload.single('image'), async (req, res) => {
   try {
     const { name, description, price, category_id, stock_quantity, scent, size } = req.body;
     
@@ -105,8 +106,8 @@ router.post('/', upload.single('image'), async (req, res) => {
   }
 });
 
-// PUT update product
-router.put('/:id', upload.single('image'), async (req, res) => {
+// PUT update product (admin only)
+router.put('/:id', verifyAdmin, upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, price, category_id, stock_quantity, scent, size } = req.body;
@@ -137,8 +138,8 @@ router.put('/:id', upload.single('image'), async (req, res) => {
   }
 });
 
-// DELETE product
-router.delete('/:id', async (req, res) => {
+// DELETE product (admin only)
+router.delete('/:id', verifyAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query('DELETE FROM products WHERE id = $1 RETURNING *', [id]);

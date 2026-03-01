@@ -18,12 +18,23 @@
   font-family: 'Playfair Display', 'Cormorant Garamond', 'Poppins', serif;
 }
 
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   background: linear-gradient(180deg, #fff7fa 0%, #ffeef3 100%);
   min-height: 100vh;
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 code {

@@ -135,16 +135,55 @@
 }
 
 @media (max-width: 768px) {
-  .product-form {
-    padding: 1.75rem;
+  .admin-page {
+    padding: 32px 0;
   }
-  
+
+  .admin-page h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .product-form {
+    padding: 1.5rem;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .form-actions {
     flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-page {
+    padding: 24px 0;
+  }
+
+  .admin-page h1 {
+    font-size: 1.75rem;
+  }
+
+  .product-form {
+    padding: 1rem;
+    border-radius: 20px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 12px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .image-preview-img {
+    max-width: 100%;
   }
 }
 

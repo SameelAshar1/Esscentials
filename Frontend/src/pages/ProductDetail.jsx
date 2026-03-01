@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import './ProductDetail.css';
 import { formatPriceInPKR } from '../utils/currency';
+import { useCart } from '../context/CartContext';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -10,6 +11,7 @@ function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -89,7 +91,11 @@ function ProductDetail() {
             <div className="product-stock">
               <strong>Stock:</strong> {product.stock_quantity > 0 ? `${product.stock_quantity} available` : 'Out of stock'}
             </div>
-            <button className="btn btn-primary add-to-cart-btn">
+            <button
+              className="btn btn-primary add-to-cart-btn"
+              onClick={() => addToCart(product, 1)}
+              disabled={product.stock_quantity <= 0}
+            >
               Add to Cart
             </button>
           </div>

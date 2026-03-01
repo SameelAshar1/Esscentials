@@ -1,4 +1,5 @@
 const pool = require('../config/database');
+const bcrypt = require('bcryptjs');
 
 const createTables = async () => {
   try {
@@ -29,6 +30,17 @@ const createTables = async () => {
       )
     `);
 
+    // Create admins table for admin-only authentication
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS admins (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) NOT NULL DEFAULT 'admin',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Insert sample categories
     await pool.query(`
       INSERT INTO categories (name, description) 
@@ -40,6 +52,24 @@ const createTables = async () => {
       ON CONFLICT (name) DO NOTHING
     `);
 
+    // Optionally seed an initial admin if credentials are provided via env
+    if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+      const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+      await pool.query(
+        `
+        INSERT INTO admins (email, password, role)
+        VALUES ($1, $2, 'admin')
+        ON CONFLICT (email) DO NOTHING
+      `,
+        [process.env.ADMIN_EMAIL, hashedPassword]
+      );
+      console.log('Admin user ensured in database for', process.env.ADMIN_EMAIL);
+    } else {
+      console.log(
+        'No ADMIN_EMAIL/ADMIN_PASSWORD provided. You can create admins manually in the database.'
+      );
+    }
+
     console.log('Database tables created successfully!');
     process.exit(0);
   } catch (error) {
@@ -49,5 +79,7 @@ const createTables = async () => {
 };
 
 createTables();
+
+
 
 

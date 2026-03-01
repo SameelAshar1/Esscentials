@@ -63,3 +63,41 @@
   left: 0;
 }
 
+@media (max-width: 768px) {
+  .about-page {
+    padding: 40px 0;
+  }
+
+  .about-page h1 {
+    font-size: 2.2rem;
+  }
+
+  .about-content {
+    padding: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-page {
+    padding: 24px 0;
+  }
+
+  .about-page h1 {
+    font-size: 1.75rem;
+  }
+
+  .about-content {
+    padding: 1.25rem;
+    border-radius: 20px;
+  }
+
+  .about-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .about-section p,
+  .about-section ul li {
+    font-size: 1rem;
+  }
+}
+

@@ -81,3 +81,21 @@
   font-style: italic;
 }
 
+@media (max-width: 480px) {
+  .product-image {
+    height: 220px;
+  }
+
+  .product-info {
+    padding: 1.25rem;
+  }
+
+  .product-info h3 {
+    font-size: 1.25rem;
+  }
+
+  .product-price {
+    font-size: 1.2rem;
+  }
+}
+

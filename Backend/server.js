@@ -9,6 +9,7 @@ dotenv.config();
 // Import routes
 const productsRoutes = require("./routes/products");
 const categoriesRoutes = require("./routes/categories");
+const adminRoutes = require("./routes/admin");
 
 // Initialize Express app
 const app = express();
@@ -24,6 +25,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Routes
 app.use("/api/products", productsRoutes);
 app.use("/api/categories", categoriesRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Health check route
 app.get("/api/health", (req, res) => {
@@ -41,4 +43,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
 
