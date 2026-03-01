@@ -1,5 +1,8 @@
 {
-  "dependencies": {
-    "cloudinary": "^2.9.0"
+  "name": "esscentials",
+  "private": true,
+  "scripts": {
+    "postinstall": "cd Backend && npm install",
+    "start": "cd Backend && npm start"
   }
 }
