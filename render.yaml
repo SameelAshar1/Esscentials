@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: esscentials-backend
+    runtime: node
+    rootDir: Backend
+    buildCommand: npm install
+    startCommand: npm start
