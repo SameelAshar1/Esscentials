@@ -1,37 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const multer = require('multer');
-const path = require('path');
 const verifyAdmin = require('../middleware/adminAuth');
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, '..', 'uploads');
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'candle-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|webp/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-    
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'));
-    }
-  }
-});
+const upload = require('../middleware/upload');
+const { uploadToCloudinary } = require('../utils/cloudinaryUpload');
 
 // GET all products
 router.get('/', async (req, res) => {
@@ -79,30 +51,40 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create new product (admin only)
-router.post('/', verifyAdmin, upload.single('image'), async (req, res) => {
+router.post('/', verifyAdmin, upload.single('image'), async (req, res, next) => {
   try {
     const { name, description, price, category_id, stock_quantity, scent, size } = req.body;
-    
-    // Log file upload info for debugging
-    if (req.file) {
-      console.log('File uploaded:', req.file.filename, 'Size:', req.file.size);
-    } else {
-      console.log('No file uploaded');
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Product image is required.' });
     }
-    
-    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
-    
+
+    console.log('[POST /products] Uploading to Cloudinary, buffer size:', req.file.buffer?.length);
+
+    // Upload image to Cloudinary (uses memory buffer - no temp file)
+    let image_url;
+    try {
+      image_url = await uploadToCloudinary(req.file.buffer);
+    } catch (uploadError) {
+      console.error('Cloudinary upload error:', uploadError);
+      const errMsg = uploadError.message || uploadError.error?.message || 'Failed to upload image';
+      return res.status(500).json({
+        error: errMsg,
+        details: uploadError.error || uploadError.http_code,
+      });
+    }
+
     const result = await pool.query(
       `INSERT INTO products (name, description, price, category_id, stock_quantity, image_url, scent, size, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
        RETURNING *`,
-      [name, description, price, category_id, stock_quantity, image_url, scent, size]
+      [name, description, price, category_id || null, stock_quantity, image_url, scent, size]
     );
-    
+
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error creating product:', error);
-    res.status(500).json({ error: 'Failed to create product', details: error.message });
+    next(error);
   }
 });
 
@@ -111,26 +93,43 @@ router.put('/:id', verifyAdmin, upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, price, category_id, stock_quantity, scent, size } = req.body;
-    
-    let query = `UPDATE products SET 
-      name = $1, description = $2, price = $3, category_id = $4, 
-      stock_quantity = $5, scent = $6, size = $7`;
-    const params = [name, description, price, category_id, stock_quantity, scent, size];
-    
+
+    let image_url = null;
     if (req.file) {
-      query += ', image_url = $' + (params.length + 1);
-      params.push(`/uploads/${req.file.filename}`);
+      try {
+        image_url = await uploadToCloudinary(req.file.buffer);
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        return res.status(500).json({
+          error: 'Failed to upload image to cloud storage.',
+          details: uploadError.message,
+        });
+      }
     }
-    
-    query += ' WHERE id = $' + (params.length + 1) + ' RETURNING *';
-    params.push(id);
-    
+
+    let query;
+    const params = [name, description, price, category_id, stock_quantity, scent, size];
+
+    if (image_url) {
+      query = `UPDATE products SET 
+        name = $1, description = $2, price = $3, category_id = $4, 
+        stock_quantity = $5, scent = $6, size = $7, image_url = $8
+        WHERE id = $9 RETURNING *`;
+      params.push(image_url, id);
+    } else {
+      query = `UPDATE products SET 
+        name = $1, description = $2, price = $3, category_id = $4, 
+        stock_quantity = $5, scent = $6, size = $7
+        WHERE id = $8 RETURNING *`;
+      params.push(id);
+    }
+
     const result = await pool.query(query, params);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Product not found' });
     }
-    
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error updating product:', error);

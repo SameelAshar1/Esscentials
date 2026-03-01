@@ -120,11 +120,9 @@ function Admin() {
       }, 2000);
     } catch (error) {
       console.error('Error adding product:', error);
-      console.error('Error response:', error.response?.data);
-      setMessage({ 
-        type: 'error', 
-        text: error.response?.data?.error || error.response?.data?.details || 'Failed to add product. Please try again.' 
-      });
+      const errData = error.response?.data;
+      const errMsg = errData?.error || errData?.details || error.message || 'Failed to add product. Please try again.';
+      setMessage({ type: 'error', text: errMsg });
     } finally {
       setLoading(false);
     }
@@ -243,13 +241,14 @@ function Admin() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="image">Product Image</label>
+            <label htmlFor="image">Product Image *</label>
             <input
               type="file"
               id="image-input"
               name="image"
               onChange={handleFileChange}
               accept="image/*"
+              required
             />
             {imagePreview && (
               <div className="image-preview-container">

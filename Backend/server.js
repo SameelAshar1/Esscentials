@@ -32,10 +32,24 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "Candle Store API is running" });
 });
 
-// Error handling middleware
+// Error handling middleware - always return actual error for debugging
 app.use((err, req, res, next) => {
+  const msg = err.message || err.error?.message || (typeof err === 'string' ? err : 'Unknown error');
+  console.error('Server error:', msg);
   console.error(err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
+
+  // Multer errors (file size, file type)
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ error: 'File too large. Maximum size is 5MB.' });
+  }
+  if (err.message && err.message.includes('image files')) {
+    return res.status(400).json({ error: err.message });
+  }
+
+  res.status(500).json({
+    error: msg,
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+  });
 });
 
 // Start server
