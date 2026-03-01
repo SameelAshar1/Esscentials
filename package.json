@@ -4,5 +4,8 @@
   "scripts": {
     "postinstall": "cd Backend && npm install",
     "start": "cd Backend && npm start"
+  },
+  "dependencies": {
+    "multer": "^2.1.0"
   }
 }

@@ -1,28 +1,34 @@
-const { Pool } = require('pg');
-const dotenv = require('dotenv');
+const { Pool } = require("pg");
 
-dotenv.config();
+let pool;
 
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'candle_store',
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-});
+if (process.env.NODE_ENV === "production") {
+  // Production → Use Neon DATABASE_URL
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
+} else {
+  // Development → Use Local PostgreSQL
+  pool = new Pool({
+    host: process.env.DB_HOST || "localhost",
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_NAME || "candle_store",
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+  });
+}
 
-// Test database connection
-pool.on('connect', () => {
-  console.log('Connected to PostgreSQL database');
-});
-
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
-});
+// Test connection
+(async () => {
+  try {
+    await pool.query("SELECT 1");
+    console.log("✅ Database connected successfully");
+  } catch (err) {
+    console.error("❌ Database connection error:", err);
+  }
+})();
 
 module.exports = pool;
-
-
-
-
